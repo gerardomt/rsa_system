@@ -79,6 +79,8 @@
                         <property name="can_focus">True</property>
                         <property name="valign">center</property>
                         <property name="hexpand">True</property>
+                        <property name="max_width_chars">257</property>
+                        <property name="input_purpose">alpha</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -213,7 +215,7 @@
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
-                        <property name="top_attach">1</property>
+                        <property name="top_attach">2</property>
                       </packing>
                     </child>
                     <child>
@@ -241,6 +243,35 @@
                         <property name="hexpand">True</property>
                         <property name="action">select-folder</property>
                         <property name="title" translatable="yes"/>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">2</property>
+                        <property name="width">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Choose key:</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkFileChooserButton" id="select_key_file_button">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="hexpand">True</property>
+                        <property name="create_folders">False</property>
+                        <property name="filter">file_pattern</property>
+                        <property name="title" translatable="yes"/>
+                        <style>
+                          <class name="color:red;"/>
+                        </style>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
