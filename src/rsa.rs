@@ -5,8 +5,8 @@
 const MESSAGE_MAX_LENGTH: usize = 257;
 
 pub struct RSA{
-    _n: u64,
-    _e: u64,
+    n: u64,
+    e: u64,
     _d: u64,
 }
 
@@ -20,11 +20,11 @@ impl RSA {
         let (e1, d1) = RSA::generar_ed(phi);
             
         RSA {
-            _n: n1,
-            _e: e1,
+            n: n1,
+            e: e1,
             _d: d1
         }
-    }        
+    }   
         
     #[allow(dead_code)]
     pub fn euclides_extendido(_a:i64, _b:i64) -> (i64, i64, i64){
@@ -49,6 +49,10 @@ impl RSA {
         (0,0)
     }
 
+    pub fn desencriptar_con_clave(_mensaje:&str, _e:u64, _n:u64) -> &str{
+        ""
+    }
+
     #[allow(dead_code)]
     pub fn encriptar(&self,_mensaje:&str) -> [u8;MESSAGE_MAX_LENGTH]{
         [0;MESSAGE_MAX_LENGTH]
@@ -57,6 +61,14 @@ impl RSA {
     #[allow(dead_code)]
     pub fn desencriptar(&self, _byte_array:[u8;MESSAGE_MAX_LENGTH]) -> &str{
         ""
+    }
+
+    pub fn get_e(&self) -> u64{
+        self.e
+    }
+
+    pub fn get_n(&self) -> u64{
+        self.n
     }
 }
  
