@@ -73,42 +73,27 @@ impl RSA {
             r += 1;
             d /= ubig(2);
         }
-        println!("r = {} d = {}",r,d);
         // hace la prueba k veces
         let mut rng = rand::thread_rng();
-        println!("k = {}",k);
-        for x in 0..10 {
-            println!("{}", x); // x: i32
-        }
 
-        
-
-        fn probar_compuesto(a: BigUint) {
-            
-
-        }
-
-        for x in 0..10 {
-            let a = rng.gen_biguint_range(&ubig(2), &n);
-            //println!("a = {}",a);
-            let mut x = a.modpow(&d,&n);
-            //println!("{}^{} mod {} = {}",a,d,n,x);
-            if x == ubig(1) || x == n.clone() - ubig(1) {
-                //println!("Entro al if");
-                continue;
+    
+        fn probar_compuesto(a: BigUint, d:BigUint, n: BigUint, r: u32) -> bool {
+            if a.modpow(&d,&n) == ubig(1)  {
+                return false;
             }
-            for j in 0..(r-1) {
-                //println!("{}^{} mod {} = ",x,2,n);
-                x = x.modpow(&ubig(2),&n);
-                //print!("{}",x);
-                if x == ubig(1) {
+            for j in 0..r {
+                if a.modpow(&((2_u64.pow(j))*d.clone()),&n)  == n.clone() - ubig(1){
                     return false;
                 }
-                if x == n.clone() - ubig(1) {
-                    break;
-                }
             }
-            return false
+            return true;
+        }
+
+        for _ in 0..k {
+            let a = rng.gen_biguint_range(&ubig(2), &n);
+            if probar_compuesto(a.clone(),d.clone(),n.clone(),r.clone()) {
+                return false;
+            }
         }
         //si la prueba no detecta que sea compuesto k veces devuelve verdadero
         return true;
@@ -189,8 +174,9 @@ mod tests {
     #[test]
     fn test_es_primo_primo(){
         assert!(RSA::es_primo(ubig(13), N_PRUEBAS));
-        assert!(RSA::es_primo(ubig(2315), N_PRUEBAS));
+        assert!(RSA::es_primo(ubig(3613), N_PRUEBAS));
         assert!(RSA::es_primo(ubig(10007), N_PRUEBAS));
+        assert!(RSA::es_primo(ubig(100000015333), N_PRUEBAS));
     }
 
     #[test]
