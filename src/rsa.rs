@@ -10,8 +10,8 @@ use num::bigint::{ToBigInt};
 const MESSAGE_MAX_LENGTH: usize = 257;
 
 pub struct RSA{
-    _n: u64,
-    _e: u64,
+    n: u64,
+    e: u64,
     _d: u64,
 }
 
@@ -25,17 +25,17 @@ impl RSA {
         let (e1, d1) = RSA::generar_ed(phi);
             
         RSA {
-            _n: n1,
-            _e: e1,
+            n: n1,
+            e: e1,
             _d: d1
         }
-    }        
+    }   
         
     fn euclides_extendido(a:BigInt , b: BigInt) -> (BigInt, BigInt, BigInt) {
         if b == 0.to_bigint().unwrap() {
             return (a, 1.to_bigint().unwrap() ,0.to_bigint().unwrap());
         }
-        let (d1, x1, y1) = euclides_extendido(b.clone(), a.clone() % b.clone());
+        let (d1, x1, y1) = RSA::euclides_extendido(b.clone(), a.clone() % b.clone());
         let d = d1.clone();
         let x = y1.clone();
         let y = x1.clone() - (a.clone()/b.clone()) * y1.clone();
@@ -60,6 +60,10 @@ impl RSA {
         (0,0)
     }
 
+    pub fn desencriptar_con_clave(_mensaje:&str, _e:u64, _n:u64) -> &str{
+        ""
+    }
+
     #[allow(dead_code)]
     pub fn encriptar(&self,_mensaje:&str) -> [u8;MESSAGE_MAX_LENGTH]{
         [0;MESSAGE_MAX_LENGTH]
@@ -68,6 +72,14 @@ impl RSA {
     #[allow(dead_code)]
     pub fn desencriptar(&self, _byte_array:[u8;MESSAGE_MAX_LENGTH]) -> &str{
         ""
+    }
+
+    pub fn get_e(&self) -> u64{
+        self.e
+    }
+
+    pub fn get_n(&self) -> u64{
+        self.n
     }
 }
  
@@ -94,10 +106,10 @@ mod tests {
 
     #[test]
     fn test_euclides_ext_2(){
-        let result = RSA::euclides_extendido(4, 123);
-        assert_eq!(result.0, 1);
-        assert_eq!(result.1, 31);
-        assert_eq!(result.2, -1);
+        let result = RSA::euclides_extendido(4.to_bigint().unwrap(), 123.to_bigint().unwrap());
+        assert_eq!(result.0, 1.to_bigint().unwrap());
+        assert_eq!(result.1, 31.to_bigint().unwrap());
+        assert_eq!(result.2, -1.to_bigint().unwrap());
     }
 
     #[test]

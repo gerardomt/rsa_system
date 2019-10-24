@@ -7,6 +7,8 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+num = "0.2"
+rand = "0.4.x"
 chrono = "0.4"
 url = "1.4"
 futures-preview = { version = "0.3.0-alpha.15", optional = true}
