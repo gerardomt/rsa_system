@@ -159,12 +159,6 @@ mod tests {
     const N_PRUEBAS : u64 =  300; //número de pruebas para es_primo()
 
     #[test]
-    #[should_panic]
-    fn test_panic_euclides_ext(){
-        RSA::euclides_extendido(big(2), big(-10));
-    }
-
-    #[test]
     fn test_euclides_ext_1(){
         let result = RSA::euclides_extendido(big(14), big(4));
         assert_eq!(result.0, big(2));
@@ -198,7 +192,7 @@ mod tests {
     #[test]
     fn test_generar_posible_primo_es_par(){
         let n = RSA::generar_posible_primo();
-        assert_eq!((n&1), 1);
+        assert_eq!(n&ubig(1), ubig(1));
     }
 
     #[test]
