@@ -6,8 +6,7 @@ extern crate num;
 extern crate num_bigint;
 extern crate rand;
 
-use num::bigint::BigInt;
-use num::bigint::{ToBigInt,RandBigInt, BigUint};
+use num::bigint::{ToBigUint, ToBigInt,RandBigInt, BigUint,BigInt};
 
 
 const MESSAGE_MAX_LENGTH: usize = 257;
@@ -21,6 +20,11 @@ pub struct RSA{
 // receives an integer and returns a BigInteger
 fn big(n: i64) -> BigInt {
     return n.to_bigint().unwrap();
+}
+
+// receives an integer and returns a BigUInteger
+fn u_big(n: u64) -> BigUint {
+    return n.to_biguint().unwrap():
 }
 
 impl RSA {
