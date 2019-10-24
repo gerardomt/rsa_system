@@ -11,6 +11,7 @@ use num_bigint:: RandBigInt;
 
 
 const MESSAGE_MAX_LENGTH: usize = 257;
+const NUM_BITS: usize = 1024;
 
 pub struct RSA{
     n: u64,
@@ -45,6 +46,12 @@ impl RSA {
         }
     }   
         
+    // recibe dos enteros a y b
+    // devuelve d,x,y donde:
+    // d = mcd(a,b)
+    // x = a^-1 mod b en caso de d=1
+    // y = b^-1 mod a en caso de d=1
+    // NOTA: x y y pueden ser negativos
     fn euclides_extendido(a:BigInt , b: BigInt) -> (BigInt, BigInt, BigInt) {
         if b == big(0) {
             return (a, big(1), big(0));
@@ -56,6 +63,10 @@ impl RSA {
         return (d,x,y);
     }
 
+    // implementacion de Miller-Rabin
+    // n es el numero que queremos saber si es primo
+    // k es el numero de veces que se ejecutara la prueba
+    // devuelve verdadero si un entero positivo es primo
     fn es_primo(n:BigUint, k:u64) -> bool{
         // si es 2 o 3, es primo
         if (n == ubig(2)) || (n == ubig(3)) {
@@ -97,11 +108,16 @@ impl RSA {
         }
         //si la prueba no detecta que sea compuesto k veces devuelve verdadero
         return true;
-}
+    }
 
-    #[allow(dead_code)]
-    fn generar_posible_primo() -> u64{
-        0
+    // genera un numero aleatorio que ademas es impar y de NUM_BITS bits
+    fn generar_posible_primo() -> BigUint{
+        // generamos un numero aleatorio de num_bits bits
+        let mut rng = rand::thread_rng();
+        // forzamos a que sea impar y que tenga al menos el numero de digitos especificado
+        let mut n = rng.gen_biguint(NUM_BITS);
+        n |= (ubig(1) << NUM_BITS - 1) | ubig(1);
+        return n;
     }
 
     pub fn generar_primo() -> u64{
@@ -143,12 +159,6 @@ mod tests {
     const N_PRUEBAS : u64 =  300; //número de pruebas para es_primo()
 
     #[test]
-    #[should_panic]
-    fn test_panic_euclides_ext(){
-        RSA::euclides_extendido(big(2), big(-10));
-    }
-
-    #[test]
     fn test_euclides_ext_1(){
         let result = RSA::euclides_extendido(big(14), big(4));
         assert_eq!(result.0, big(2));
@@ -182,7 +192,7 @@ mod tests {
     #[test]
     fn test_generar_posible_primo_es_par(){
         let n = RSA::generar_posible_primo();
-        assert_eq!((n&1), 1);
+        assert_eq!(n&ubig(1), ubig(1));
     }
 
     #[test]
