@@ -7,8 +7,6 @@ use crate::rsa;
 const MESSAGE_MAX_LENGTH: usize = 257;
 
 pub fn encrypt_file(filename:&str, destination:&str){
-    let my_rsa = rsa::RSA::new();
-
     let mut content = fs::read_to_string(filename)
         .expect("Something went wrong reading the file");
 
@@ -16,7 +14,13 @@ pub fn encrypt_file(filename:&str, destination:&str){
         content.split_off(MESSAGE_MAX_LENGTH);
     }
 
-    let encrypted_content = my_rsa.encriptar(&content);
+    encrypt_message(&content, destination);
+}
+
+pub fn encrypt_message(message:&str, destination:&str){
+    let my_rsa = rsa::RSA::new();
+
+    let encrypted_content = my_rsa.encriptar(message);
     let encrypted_content = str::from_utf8(&encrypted_content)
         .expect("Invalid UTF-8 sequence");
     let mut key = my_rsa.get_e().to_string();
@@ -24,8 +28,7 @@ pub fn encrypt_file(filename:&str, destination:&str){
     key.push_str(&my_rsa.get_n().to_string());
 
     let mut path = String::from(destination);
-    path.push_str("/encrypted_");
-    path.push_str(filename);
+    path.push_str("/encrypted_file.txt");
 
     let mut keypath = String::from(destination);
     keypath.push_str("/key.txt");
@@ -35,7 +38,6 @@ pub fn encrypt_file(filename:&str, destination:&str){
     fs::write(keypath, key)
         .expect("Something went wrong writing the key");
 }
-
 
 pub fn decrypt_file(filename:&str, keyfile:&str, destination:&str){
     let content = fs::read_to_string(filename)
@@ -58,9 +60,8 @@ pub fn decrypt_file(filename:&str, keyfile:&str, destination:&str){
     let message = rsa::RSA::desencriptar_con_clave(&content, e, n);
 
     let mut path = String::from(destination);
-    path.push_str("/plain_");
-    path.push_str(filename);
+    path.push_str("/plain_text.txt");
 
     fs::write(path, message)
-        .expect("Something went wrong writing the file");
+        .expect("Something went wrong writing the fileoe");
 }
