@@ -23,7 +23,7 @@ fn big(n: i64) -> BigInt {
 }
 
 // receives an integer and returns a BigUInteger
-fn u_big(n: u64) -> BigUint {
+fn ubig(n: u64) -> BigUint {
     return n.to_biguint().unwrap():
 }
 
