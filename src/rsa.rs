@@ -3,9 +3,12 @@
 // la función sea usada en otro lado.
 
 extern crate num;
+extern crate num_bigint;
+extern crate rand;
 
 use num::bigint::BigInt;
-use num::bigint::{ToBigInt};
+use num::bigint::{ToBigInt,RandBigInt, BigUint};
+
 
 const MESSAGE_MAX_LENGTH: usize = 257;
 
@@ -15,7 +18,13 @@ pub struct RSA{
     _d: u64,
 }
 
+// receives an integer and returns a BigInteger
+fn big(n: i64) -> BigInt {
+    return n.to_bigint().unwrap();
+}
+
 impl RSA {
+
     #[allow(dead_code)]
     pub fn new() -> RSA{
         let p = RSA::generar_primo();
@@ -32,8 +41,8 @@ impl RSA {
     }   
         
     fn euclides_extendido(a:BigInt , b: BigInt) -> (BigInt, BigInt, BigInt) {
-        if b == 0.to_bigint().unwrap() {
-            return (a, 1.to_bigint().unwrap() ,0.to_bigint().unwrap());
+        if b == big(0) {
+            return (a, big(1), big(0));
         }
         let (d1, x1, y1) = RSA::euclides_extendido(b.clone(), a.clone() % b.clone());
         let d = d1.clone();
@@ -93,23 +102,23 @@ mod tests {
     #[test]
     #[should_panic]
     fn test_panic_euclides_ext(){
-        RSA::euclides_extendido(2.to_bigint().unwrap(), -10.to_bigint().unwrap());
+        RSA::euclides_extendido(big(2), big(-10));
     }
 
     #[test]
     fn test_euclides_ext_1(){
-        let result = RSA::euclides_extendido(14.to_bigint().unwrap(), 4.to_bigint().unwrap());
-        assert_eq!(result.0, 2.to_bigint().unwrap());
-        assert_eq!(result.1, 1.to_bigint().unwrap());
-        assert_eq!(result.2, -3.to_bigint().unwrap());
+        let result = RSA::euclides_extendido(big(14), big(4));
+        assert_eq!(result.0, big(2));
+        assert_eq!(result.1, big(1));
+        assert_eq!(result.2, big(-3));
     }
 
     #[test]
     fn test_euclides_ext_2(){
-        let result = RSA::euclides_extendido(4.to_bigint().unwrap(), 123.to_bigint().unwrap());
-        assert_eq!(result.0, 1.to_bigint().unwrap());
-        assert_eq!(result.1, 31.to_bigint().unwrap());
-        assert_eq!(result.2, -1.to_bigint().unwrap());
+        let result = RSA::euclides_extendido(big(4), big(123));
+        assert_eq!(result.0, big(1));
+        assert_eq!(result.1, big(31));
+        assert_eq!(result.2, big(-1));
     }
 
     #[test]
