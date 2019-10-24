@@ -10,7 +10,7 @@ edition = "2018"
 [dependencies]
 num = "0.2"
 num-bigint = { version = "0.2.0", features = ["rand"] }
-rand = "0.4.x"
+rand = "0.5.4"
 chrono = "0.4"
 url = "1.4"
 futures-preview = { version = "0.3.0-alpha.15", optional = true}
