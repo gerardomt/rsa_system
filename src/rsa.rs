@@ -2,6 +2,8 @@
 // de implementar la función y quitar #[allow(dead_code)] cuando de que
 // la función sea usada en otro lado.
 
+extern crate num;
+
 use num::bigint::BigInt;
 use num::bigint::{ToBigInt};
 
@@ -79,15 +81,15 @@ mod tests {
     #[test]
     #[should_panic]
     fn test_panic_euclides_ext(){
-        RSA::euclides_extendido(2, -10);
+        RSA::euclides_extendido(2.to_bigint().unwrap(), -10.to_bigint().unwrap());
     }
 
     #[test]
     fn test_euclides_ext_1(){
-        let result = RSA::euclides_extendido(14, 4);
-        assert_eq!(result.0, 2);
-        assert_eq!(result.1, 1);
-        assert_eq!(result.2, -3);
+        let result = RSA::euclides_extendido(14.to_bigint().unwrap(), 4.to_bigint().unwrap());
+        assert_eq!(result.0, 2.to_bigint().unwrap());
+        assert_eq!(result.1, 1.to_bigint().unwrap());
+        assert_eq!(result.2, -3.to_bigint().unwrap());
     }
 
     #[test]
