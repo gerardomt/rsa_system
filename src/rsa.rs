@@ -2,6 +2,11 @@
 // de implementar la función y quitar #[allow(dead_code)] cuando de que
 // la función sea usada en otro lado.
 
+extern crate num;
+
+use num::bigint::BigInt;
+use num::bigint::{ToBigInt};
+
 const MESSAGE_MAX_LENGTH: usize = 257;
 
 pub struct RSA{
@@ -26,9 +31,15 @@ impl RSA {
         }
     }   
         
-    #[allow(dead_code)]
-    pub fn euclides_extendido(_a:i64, _b:i64) -> (i64, i64, i64){
-        (0,0,0)
+    fn euclides_extendido(a:BigInt , b: BigInt) -> (BigInt, BigInt, BigInt) {
+        if b == 0.to_bigint().unwrap() {
+            return (a, 1.to_bigint().unwrap() ,0.to_bigint().unwrap());
+        }
+        let (d1, x1, y1) = RSA::euclides_extendido(b.clone(), a.clone() % b.clone());
+        let d = d1.clone();
+        let x = y1.clone();
+        let y = x1.clone() - (a.clone()/b.clone()) * y1.clone();
+        return (d,x,y);
     }
 
     #[allow(dead_code)]
@@ -82,23 +93,23 @@ mod tests {
     #[test]
     #[should_panic]
     fn test_panic_euclides_ext(){
-        RSA::euclides_extendido(2, -10);
+        RSA::euclides_extendido(2.to_bigint().unwrap(), -10.to_bigint().unwrap());
     }
 
     #[test]
     fn test_euclides_ext_1(){
-        let result = RSA::euclides_extendido(14, 4);
-        assert_eq!(result.0, 2);
-        assert_eq!(result.1, 1);
-        assert_eq!(result.2, -3);
+        let result = RSA::euclides_extendido(14.to_bigint().unwrap(), 4.to_bigint().unwrap());
+        assert_eq!(result.0, 2.to_bigint().unwrap());
+        assert_eq!(result.1, 1.to_bigint().unwrap());
+        assert_eq!(result.2, -3.to_bigint().unwrap());
     }
 
     #[test]
     fn test_euclides_ext_2(){
-        let result = RSA::euclides_extendido(4, 123);
-        assert_eq!(result.0, 1);
-        assert_eq!(result.1, 31);
-        assert_eq!(result.2, -1);
+        let result = RSA::euclides_extendido(4.to_bigint().unwrap(), 123.to_bigint().unwrap());
+        assert_eq!(result.0, 1.to_bigint().unwrap());
+        assert_eq!(result.1, 31.to_bigint().unwrap());
+        assert_eq!(result.2, -1.to_bigint().unwrap());
     }
 
     #[test]
