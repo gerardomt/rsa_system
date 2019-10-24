@@ -6,7 +6,8 @@ extern crate num;
 extern crate num_bigint;
 extern crate rand;
 
-use num::bigint::{ToBigUint, ToBigInt,RandBigInt, BigUint,BigInt};
+use num::bigint::{ToBigUint, ToBigInt, BigUint,BigInt};
+use num_bigint:: RandBigInt;
 
 
 const MESSAGE_MAX_LENGTH: usize = 257;
@@ -24,7 +25,7 @@ fn big(n: i64) -> BigInt {
 
 // receives an integer and returns a BigUInteger
 fn ubig(n: u64) -> BigUint {
-    return n.to_biguint().unwrap():
+    return n.to_biguint().unwrap();
 }
 
 impl RSA {
@@ -55,10 +56,63 @@ impl RSA {
         return (d,x,y);
     }
 
-    #[allow(dead_code)]
-    pub fn es_primo(_n:u64, _k:u64) -> bool{
-        false
-    }
+    fn es_primo(n:BigUint, k:u64) -> bool{
+        // si es 2 o 3, es primo
+        if (n == ubig(2)) || (n == ubig(3)) {
+            return true;
+        }
+        // si es par, no es primo 
+        if n.clone() & ubig(1) == ubig(0){
+            return false;
+        }
+        // descomponemos a n en la forma (2^r)*d + 1
+        let mut r = 0;
+        let mut d = n.clone() - ubig(1);
+        //mientras d sea par
+        while d.clone() & ubig(1) == ubig(0) {
+            r += 1;
+            d /= ubig(2);
+        }
+        println!("r = {} d = {}",r,d);
+        // hace la prueba k veces
+        let mut rng = rand::thread_rng();
+        println!("k = {}",k);
+        for x in 0..10 {
+            println!("{}", x); // x: i32
+        }
+
+        
+
+        fn probar_compuesto(a: BigUint) {
+            
+
+        }
+
+        for x in 0..10 {
+            let a = rng.gen_biguint_range(&ubig(2), &n);
+            //println!("a = {}",a);
+            let mut x = a.modpow(&d,&n);
+            //println!("{}^{} mod {} = {}",a,d,n,x);
+            if x == ubig(1) || x == n.clone() - ubig(1) {
+                //println!("Entro al if");
+                continue;
+            }
+            for j in 0..(r-1) {
+                //println!("{}^{} mod {} = ",x,2,n);
+                x = x.modpow(&ubig(2),&n);
+                //print!("{}",x);
+                if x == ubig(1) {
+                    return false;
+                }
+                if x == n.clone() - ubig(1) {
+                    break;
+                }
+            }
+            return false
+        }
+        //si la prueba no detecta que sea compuesto k veces devuelve verdadero
+        return true;
+}
 
     #[allow(dead_code)]
     fn generar_posible_primo() -> u64{
@@ -129,14 +183,14 @@ mod tests {
     fn test_es_primo_no_primo(){
         let mut rng = rand::thread_rng();
         let comp:u64 = (rng.gen::<u32>() as u64) * 2;
-        assert!(!(RSA::es_primo(comp as u64, N_PRUEBAS)));
+        assert!(!(RSA::es_primo(ubig(comp as u64), N_PRUEBAS)));
     }
 
     #[test]
     fn test_es_primo_primo(){
-        assert!(RSA::es_primo(13, N_PRUEBAS));
-        assert!(RSA::es_primo(2315, N_PRUEBAS));
-        assert!(RSA::es_primo(10007, N_PRUEBAS));
+        assert!(RSA::es_primo(ubig(13), N_PRUEBAS));
+        assert!(RSA::es_primo(ubig(2315), N_PRUEBAS));
+        assert!(RSA::es_primo(ubig(10007), N_PRUEBAS));
     }
 
     #[test]
