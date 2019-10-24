@@ -6,21 +6,32 @@ use crate::rsa;
 
 const MESSAGE_MAX_LENGTH: usize = 257;
 
+/// Cifra el contenido del archivo indicado en 'filename' y crea dos
+/// nuevos archivos en el directorio indicado en 'destination'; uno
+/// contiene el mensaje encriptado y otro la clave que se usó para
+/// encriptarlo.  Sólo son cifrados los primeros 'MESSAGE_MAX_LENGTH'
+/// caracteres en 'filename' los demás son ignorados
 pub fn encrypt_file(filename:&str, destination:&str){
-    let mut content = fs::read_to_string(filename)
+    let content = fs::read_to_string(filename)
         .expect("Something went wrong reading the file");
-
-    if content.len() > MESSAGE_MAX_LENGTH {
-        content.split_off(MESSAGE_MAX_LENGTH);
-    }
 
     encrypt_message(&content, destination);
 }
 
+/// Cifra la cadena 'message' y crea dos nuevos archivos en el
+/// directorio indicado en 'destination'; uno contiene el mensaje
+/// cifrado y otro, la clave que se usó para encriptarlo.  Sólo son
+/// cifrados los primeros 'MESSAGE_MAX_LENGTH' caracteres en 'message'
+/// los demás son ignorados
 pub fn encrypt_message(message:&str, destination:&str){
     let my_rsa = rsa::RSA::new();
 
-    let encrypted_content = my_rsa.encriptar(message);
+    let mut message = String::from(message);
+    if message.len() > MESSAGE_MAX_LENGTH {
+        message.split_off(MESSAGE_MAX_LENGTH);
+    }
+
+    let encrypted_content = my_rsa.encriptar(&message);
     let encrypted_content = str::from_utf8(&encrypted_content)
         .expect("Invalid UTF-8 sequence");
     let mut key = my_rsa.get_e().to_string();
@@ -39,6 +50,10 @@ pub fn encrypt_message(message:&str, destination:&str){
         .expect("Something went wrong writing the key");
 }
 
+/// Descifra el contenido del archivo indicado en 'filename'
+/// utilizando la clave dentro del archivo 'keyfile' y guarda el texto
+/// plano en un nuevo archivo dentro del directorio indicado en
+/// 'destination'
 pub fn decrypt_file(filename:&str, keyfile:&str, destination:&str){
     let content = fs::read_to_string(filename)
         .expect("Something went wrong reading the file");
