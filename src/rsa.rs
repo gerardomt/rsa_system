@@ -2,6 +2,9 @@
 // de implementar la función y quitar #[allow(dead_code)] cuando de que
 // la función sea usada en otro lado.
 
+use num::bigint::BigInt;
+use num::bigint::{ToBigInt};
+
 const MESSAGE_MAX_LENGTH: usize = 257;
 
 pub struct RSA{
@@ -26,9 +29,15 @@ impl RSA {
         }
     }        
         
-    #[allow(dead_code)]
-    pub fn euclides_extendido(_a:i64, _b:i64) -> (i64, i64, i64){
-        (0,0,0)
+    fn euclides_extendido(a:BigInt , b: BigInt) -> (BigInt, BigInt, BigInt) {
+        if b == 0.to_bigint().unwrap() {
+            return (a, 1.to_bigint().unwrap() ,0.to_bigint().unwrap());
+        }
+        let (d1, x1, y1) = euclides_extendido(b.clone(), a.clone() % b.clone());
+        let d = d1.clone();
+        let x = y1.clone();
+        let y = x1.clone() - (a.clone()/b.clone()) * y1.clone();
+        return (d,x,y);
     }
 
     #[allow(dead_code)]
