@@ -12,9 +12,10 @@ use num_bigint:: RandBigInt;
 
 const MESSAGE_MAX_LENGTH: usize = 257;
 const NUM_BITS: usize = 1024;
+const N_PRUEBAS : u64 =  300;
 
 pub struct RSA{
-    n: u64,
+    n: BigUint,
     e: u64,
     _d: u64,
 }
@@ -36,7 +37,7 @@ impl RSA {
         let p = RSA::generar_primo();
         let q = RSA::generar_primo();
         let n1 = p*q;
-        let phi = (p-1)*(q-1);
+        let phi = (p-ubig(1))*(q-ubig(1));
         let (e1, d1) = RSA::generar_ed(phi);
             
         RSA {
@@ -120,8 +121,13 @@ impl RSA {
         return n;
     }
 
-    pub fn generar_primo() -> u64{
-        1
+    //genera un primo aleatorio de al menos 100 digitos y a lo mas 1024 bits
+    pub fn generar_primo() -> BigUint{
+        let mut p = RSA::generar_posible_primo();
+        while !RSA::es_primo(p, N_PRUEBAS) {
+            p = RSA::generar_posible_primo();
+        }
+        return p;
     }
 
     fn generar_ed(_phi:u64) -> (u64, u64){
