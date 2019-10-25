@@ -11,12 +11,13 @@ use num_bigint:: RandBigInt;
 
 
 const MESSAGE_MAX_LENGTH: usize = 257;
-const NUM_BITS: usize = 1024;
+const NUM_BITS: usize = 100;
+const N_PRUEBAS : u64 =  300;
 
 pub struct RSA{
-    n: u64,
-    e: u64,
-    _d: u64,
+    n: BigUint,
+    e: BigUint,
+    _d: BigUint,
 }
 
 // receives an integer and returns a BigInteger
@@ -35,9 +36,9 @@ impl RSA {
     pub fn new() -> RSA{
         let p = RSA::generar_primo();
         let q = RSA::generar_primo();
-        let n1 = p*q;
-        let phi = (p-1)*(q-1);
-        let (e1, d1) = RSA::generar_ed(phi);
+        let n1 = p.clone()*q.clone();
+        let phi = (p.clone()-ubig(1))*(q.clone()-ubig(1));
+        let (e1, d1) = RSA::generar_ed(phi.clone());
             
         RSA {
             n: n1,
@@ -120,12 +121,17 @@ impl RSA {
         return n;
     }
 
-    pub fn generar_primo() -> u64{
-        1
+    //genera un primo aleatorio de al menos 100 digitos y a lo mas 1024 bits
+    pub fn generar_primo() -> BigUint{
+        let mut p = RSA::generar_posible_primo();
+        while !RSA::es_primo(p.clone(), N_PRUEBAS) {
+            p = RSA::generar_posible_primo();
+        }
+        return p;
     }
 
-    fn generar_ed(_phi:u64) -> (u64, u64){
-        (0,0)
+    fn generar_ed(_phi:BigUint) -> (BigUint, BigUint){
+        (ubig(0),ubig(0))
     }
 
     pub fn desencriptar_con_clave(_mensaje:&str, _e:u64, _n:u64) -> &str{
@@ -142,12 +148,12 @@ impl RSA {
         ""
     }
 
-    pub fn get_e(&self) -> u64{
-        self.e
+    pub fn get_e(&self) -> BigUint{
+        self.e.clone()
     }
 
-    pub fn get_n(&self) -> u64{
-        self.n
+    pub fn get_n(&self) -> BigUint{
+        self.n.clone()
     }
 }
  
@@ -197,16 +203,16 @@ mod tests {
 
     #[test]
     fn test_generar_primo() {
-        for _ in 0..10 {
-            let mut n =  RSA::generar_primo();
+        for _ in 0..3 {
+            let n =  RSA::generar_primo();
             assert!(RSA::es_primo(n, N_PRUEBAS));
         }
     }
 
     #[test]
     fn test_generar_ed_e_menor_phi(){
-        let phi = 104728; //phi(104729)=104728
-        let n = RSA::generar_ed(phi);
+        let phi = ubig(104728); //phi(104729)=104728
+        let n = RSA::generar_ed(phi.clone());
         assert!(n.0<phi);
     }
 
