@@ -130,7 +130,26 @@ impl RSA {
         return p;
     }
 
+def generarED(self,phi):
+        p = self.generarPosiblePrimo()
+        g,d,_ = self.euclidesExtendido(p,phi)
+        while g != 1 or p > phi:
+            p = self.generarPosiblePrimo()
+            g,d,_ = self.euclidesExtendido(p,phi)
+        d %= phi
+        return p,d
+
+    //regresa e, un numero menor que phi y coprimo con phi
+    // d es su inverso modulo phi
     fn generar_ed(_phi:BigUint) -> (BigUint, BigUint){
+        let p = RSA::generarPosiblePrimo();
+        let mut (g,d,_) = RSA::euclides_extendido(p.clone(),phi.clone());
+        while g.clone() != ubig(1) || p.clone() > phi.clone() {
+            let p = RSA::generarPosiblePrimo();
+            (g,d,_) = RSA::euclides_extendido(p.clone(),phi.clone());
+        }
+        let d %= phi 
+        return (p,d);
         (ubig(0),ubig(0))
     }
 
