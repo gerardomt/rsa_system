@@ -132,15 +132,17 @@ impl RSA {
 
     //regresa e, un numero menor que phi y coprimo con phi
     // d es su inverso modulo phi
-    fn generar_ed(_phi:BigUint) -> (BigUint, BigUint){
-        let e = RSA::generarPosiblePrimo();
-        let mut (g,d,_) = RSA::euclides_extendido(e.clone(),phi.clone());
-        while g.clone() != ubig(1) || e.clone() > phi.clone() {
-            let e = RSA::generarPosiblePrimo();
-            (g,d,_) = RSA::euclides_extendido(e.clone(),phi.clone());
+    fn generar_ed(phi:BigUint) -> (BigUint, BigUint){
+        let e = RSA::generar_posible_primo();
+        let (mut g,mut d,_) = RSA::euclides_extendido(e.clone().to_bigint().unwrap(),phi.clone().to_bigint().unwrap());
+        while g.clone() != big(1) || e.clone() >= phi.clone() {
+            let e = RSA::generar_posible_primo();
+            let (gp,dp,_) = RSA::euclides_extendido(e.clone().to_bigint().unwrap(),phi.clone().to_bigint().unwrap());
+            // rust no permite desempacar tuplas usando variables existentes
+            g = gp;
+            d = dp;
         }
-        d %= phi;
-        return (e,d);
+        return (e,d.to_biguint().unwrap()%phi);
     }
 
     pub fn desencriptar_con_clave(_mensaje:&str, _e:u64, _n:u64) -> &str{
@@ -220,10 +222,16 @@ mod tests {
 
     #[test]
     fn test_generar_ed_e_menor_phi(){
-        let phi = ubig(775148396313924632856157018692053563208632353428439537437820); 
-        let n = RSA::generar_ed(phi.clone());
-        
-        assert!(n.0<phi);
+        let phi = "77514839631394632856157018692053563208632353428439537437820".parse::<BigUint>().unwrap();
+        let (e,d) = RSA::generar_ed(phi.clone());
+        println!("este es phi: {}",phi.to_bigint().unwrap());
+        println!("este es e: {}",phi.to_bigint().unwrap());
+        println!("este es d: {}",phi.to_bigint().unwrap());
+        let (g, _, _) = RSA::euclides_extendido(e.to_bigint().unwrap(), phi.to_bigint().unwrap());
+        println!("este es g: {}", g);
+        assert!(e.clone()<phi.clone());
+        assert!(g == big(1));
+        assert!((e*d)%phi == ubig(1));
     }
 
 
