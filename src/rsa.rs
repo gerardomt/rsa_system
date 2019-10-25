@@ -16,8 +16,8 @@ const N_PRUEBAS : u64 =  300;
 
 pub struct RSA{
     n: BigUint,
-    e: u64,
-    _d: u64,
+    e: BigUint,
+    _d: BigUint,
 }
 
 // receives an integer and returns a BigInteger
@@ -36,9 +36,9 @@ impl RSA {
     pub fn new() -> RSA{
         let p = RSA::generar_primo();
         let q = RSA::generar_primo();
-        let n1 = p*q;
-        let phi = (p-ubig(1))*(q-ubig(1));
-        let (e1, d1) = RSA::generar_ed(phi);
+        let n1 = p.clone()*q.clone();
+        let phi = (p.clone()-ubig(1))*(q.clone()-ubig(1));
+        let (e1, d1) = RSA::generar_ed(phi.clone());
             
         RSA {
             n: n1,
@@ -130,8 +130,8 @@ impl RSA {
         return p;
     }
 
-    fn generar_ed(_phi:u64) -> (u64, u64){
-        (0,0)
+    fn generar_ed(_phi:BigUint) -> (BigUint, BigUint){
+        (ubig(0),ubig(0))
     }
 
     pub fn desencriptar_con_clave(_mensaje:&str, _e:u64, _n:u64) -> &str{
@@ -148,11 +148,11 @@ impl RSA {
         ""
     }
 
-    pub fn get_e(&self) -> u64{
+    pub fn get_e(&self) -> BigUint{
         self.e
     }
 
-    pub fn get_n(&self) -> u64{
+    pub fn get_n(&self) -> BigUint{
         self.n
     }
 }
@@ -211,7 +211,7 @@ mod tests {
 
     #[test]
     fn test_generar_ed_e_menor_phi(){
-        let phi = 104728; //phi(104729)=104728
+        let phi = ubig(104728); //phi(104729)=104728
         let n = RSA::generar_ed(phi);
         assert!(n.0<phi);
     }
