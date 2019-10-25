@@ -130,27 +130,17 @@ impl RSA {
         return p;
     }
 
-def generarED(self,phi):
-        p = self.generarPosiblePrimo()
-        g,d,_ = self.euclidesExtendido(p,phi)
-        while g != 1 or p > phi:
-            p = self.generarPosiblePrimo()
-            g,d,_ = self.euclidesExtendido(p,phi)
-        d %= phi
-        return p,d
-
     //regresa e, un numero menor que phi y coprimo con phi
     // d es su inverso modulo phi
     fn generar_ed(_phi:BigUint) -> (BigUint, BigUint){
-        let p = RSA::generarPosiblePrimo();
-        let mut (g,d,_) = RSA::euclides_extendido(p.clone(),phi.clone());
-        while g.clone() != ubig(1) || p.clone() > phi.clone() {
-            let p = RSA::generarPosiblePrimo();
-            (g,d,_) = RSA::euclides_extendido(p.clone(),phi.clone());
+        let e = RSA::generarPosiblePrimo();
+        let mut (g,d,_) = RSA::euclides_extendido(e.clone(),phi.clone());
+        while g.clone() != ubig(1) || e.clone() > phi.clone() {
+            let e = RSA::generarPosiblePrimo();
+            (g,d,_) = RSA::euclides_extendido(e.clone(),phi.clone());
         }
-        let d %= phi 
-        return (p,d);
-        (ubig(0),ubig(0))
+        d %= phi;
+        return (e,d);
     }
 
     pub fn desencriptar_con_clave(_mensaje:&str, _e:u64, _n:u64) -> &str{
@@ -230,8 +220,9 @@ mod tests {
 
     #[test]
     fn test_generar_ed_e_menor_phi(){
-        let phi = ubig(104728); //phi(104729)=104728
+        let phi = ubig(775148396313924632856157018692053563208632353428439537437820); 
         let n = RSA::generar_ed(phi.clone());
+        
         assert!(n.0<phi);
     }
 
