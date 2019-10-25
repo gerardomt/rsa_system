@@ -196,10 +196,19 @@ mod tests {
     }
 
     #[test]
+    fn test_generar_primo() {
+        for _ in 0..10 {
+            let mut n =  RSA::generar_primo();
+            assert!(RSA::es_primo(n, N_PRUEBAS));
+        }
+    }
+
+    #[test]
     fn test_generar_ed_e_menor_phi(){
         let phi = 104728; //phi(104729)=104728
         let n = RSA::generar_ed(phi);
         assert!(n.0<phi);
     }
+
 
 }
