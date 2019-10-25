@@ -149,11 +149,11 @@ impl RSA {
     }
 
     pub fn get_e(&self) -> BigUint{
-        self.e
+        self.e.clone()
     }
 
     pub fn get_n(&self) -> BigUint{
-        self.n
+        self.n.clone()
     }
 }
  
@@ -204,7 +204,7 @@ mod tests {
     #[test]
     fn test_generar_primo() {
         for _ in 0..10 {
-            let mut n =  RSA::generar_primo();
+            let n =  RSA::generar_primo();
             assert!(RSA::es_primo(n, N_PRUEBAS));
         }
     }
@@ -212,7 +212,7 @@ mod tests {
     #[test]
     fn test_generar_ed_e_menor_phi(){
         let phi = ubig(104728); //phi(104729)=104728
-        let n = RSA::generar_ed(phi);
+        let n = RSA::generar_ed(phi.clone());
         assert!(n.0<phi);
     }
 
