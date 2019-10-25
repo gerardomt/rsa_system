@@ -121,7 +121,7 @@ impl RSA {
         return n;
     }
 
-    //genera un primo aleatorio de al menos 100 digitos y a lo mas 1024 bits
+    //genera un primo aleatorio de NUM_BITS bits
     pub fn generar_primo() -> BigUint{
         let mut p = RSA::generar_posible_primo();
         while !RSA::es_primo(p.clone(), N_PRUEBAS) {
