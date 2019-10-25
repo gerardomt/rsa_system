@@ -11,7 +11,7 @@ use num_bigint:: RandBigInt;
 
 
 const MESSAGE_MAX_LENGTH: usize = 257;
-const NUM_BITS: usize = 1024;
+const NUM_BITS: usize = 100;
 const N_PRUEBAS : u64 =  300;
 
 pub struct RSA{
@@ -203,7 +203,7 @@ mod tests {
 
     #[test]
     fn test_generar_primo() {
-        for _ in 0..10 {
+        for _ in 0..3 {
             let n =  RSA::generar_primo();
             assert!(RSA::es_primo(n, N_PRUEBAS));
         }
