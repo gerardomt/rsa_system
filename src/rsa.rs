@@ -121,7 +121,7 @@ impl RSA {
         return n;
     }
 
-    //genera un primo aleatorio de al menos 100 digitos y a lo mas 1024 bits
+    //genera un primo aleatorio de NUM_BITS bits
     pub fn generar_primo() -> BigUint{
         let mut p = RSA::generar_posible_primo();
         while !RSA::es_primo(p.clone(), N_PRUEBAS) {
@@ -130,8 +130,26 @@ impl RSA {
         return p;
     }
 
-    fn generar_ed(_phi:BigUint) -> (BigUint, BigUint){
-        (ubig(0),ubig(0))
+    //regresa e, un numero menor que phi y coprimo con phi
+    // d es su inverso modulo phi
+    fn generar_ed(phi:BigUint) -> (BigUint, BigUint){
+        let mut e = RSA::generar_posible_primo();
+        let (mut g,mut d,_) = RSA::euclides_extendido(e.to_bigint().unwrap(),phi.to_bigint().unwrap());
+        while g.clone() != big(1) || e.clone() > phi.clone() {
+            e = RSA::generar_posible_primo();
+            let (gp,dp,_) = RSA::euclides_extendido(e.to_bigint().unwrap(),phi.to_bigint().unwrap());
+            // rust no permite desempacar tuplas usando variables existentes
+            g = gp;
+            d = dp;
+        }
+        let u_d: BigUint;
+        if d < big(0) {
+            u_d = (d % phi.to_bigint().unwrap() + phi.to_bigint().unwrap()).to_biguint().unwrap();
+        }
+        else {
+            u_d = d.to_biguint().unwrap() % phi.clone();
+        }
+        return (e,u_d);
     }
 
     pub fn desencriptar_con_clave(_mensaje:&str, _e:u64, _n:u64) -> &str{
@@ -211,9 +229,18 @@ mod tests {
 
     #[test]
     fn test_generar_ed_e_menor_phi(){
-        let phi = ubig(104728); //phi(104729)=104728
-        let n = RSA::generar_ed(phi.clone());
-        assert!(n.0<phi);
+        for _ in 0..10 {
+            let phi = "77514839631394632856157018692053563208632353428439537437820".parse::<BigUint>().unwrap();
+            let (e,d) = RSA::generar_ed(phi.clone());
+            println!("este es phi: {}",phi.to_bigint().unwrap());
+            println!("este es e: {}",e.to_bigint().unwrap());
+            println!("este es d: {}",d);
+            let (g, _, _) = RSA::euclides_extendido(e.to_bigint().unwrap(), phi.to_bigint().unwrap());
+            println!("este es g: {}", g);
+            assert!(e.clone()<phi.clone());
+            assert!(g == big(1));
+            assert!((e*d)%phi == ubig(1));
+        }
     }
 
 
