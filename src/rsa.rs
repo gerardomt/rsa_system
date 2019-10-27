@@ -133,10 +133,10 @@ impl RSA {
     //regresa e, un numero menor que phi y coprimo con phi
     // d es su inverso modulo phi
     fn generar_ed(phi:BigUint) -> (BigUint, BigUint){
-        let e = RSA::generar_posible_primo();
+        let mut e = RSA::generar_posible_primo();
         let (mut g,mut d,_) = RSA::euclides_extendido(e.to_bigint().unwrap(),phi.to_bigint().unwrap());
         while g.clone() != big(1) || e.clone() > phi.clone() {
-            let e = RSA::generar_posible_primo();
+            e = RSA::generar_posible_primo();
             let (gp,dp,_) = RSA::euclides_extendido(e.to_bigint().unwrap(),phi.to_bigint().unwrap());
             // rust no permite desempacar tuplas usando variables existentes
             g = gp;
