@@ -143,14 +143,12 @@ impl RSA {
             d = dp;
         }
         let u_d: BigUint;
-        println!("original d:{}", d);
         if d < big(0) {
             u_d = (d % phi.to_bigint().unwrap() + phi.to_bigint().unwrap()).to_biguint().unwrap();
         }
         else {
             u_d = d.to_biguint().unwrap() % phi.clone();
         }
-        println!("g: {} e:{} d:{}", g, e, u_d);
         return (e,u_d);
     }
 
@@ -231,16 +229,18 @@ mod tests {
 
     #[test]
     fn test_generar_ed_e_menor_phi(){
-        let phi = "77514839631394632856157018692053563208632353428439537437820".parse::<BigUint>().unwrap();
-        let (e,d) = RSA::generar_ed(phi.clone());
-        println!("este es phi: {}",phi.to_bigint().unwrap());
-        println!("este es e: {}",e.to_bigint().unwrap());
-        println!("este es d: {}",d);
-        let (g, _, _) = RSA::euclides_extendido(e.to_bigint().unwrap(), phi.to_bigint().unwrap());
-        println!("este es g: {}", g);
-        assert!(e.clone()<phi.clone());
-        assert!(g == big(1));
-        assert!((e*d)%phi == ubig(1));
+        for _ in 0..10 {
+            let phi = "77514839631394632856157018692053563208632353428439537437820".parse::<BigUint>().unwrap();
+            let (e,d) = RSA::generar_ed(phi.clone());
+            println!("este es phi: {}",phi.to_bigint().unwrap());
+            println!("este es e: {}",e.to_bigint().unwrap());
+            println!("este es d: {}",d);
+            let (g, _, _) = RSA::euclides_extendido(e.to_bigint().unwrap(), phi.to_bigint().unwrap());
+            println!("este es g: {}", g);
+            assert!(e.clone()<phi.clone());
+            assert!(g == big(1));
+            assert!((e*d)%phi == ubig(1));
+        }
     }
 
 
