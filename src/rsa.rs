@@ -134,15 +134,24 @@ impl RSA {
     // d es su inverso modulo phi
     fn generar_ed(phi:BigUint) -> (BigUint, BigUint){
         let e = RSA::generar_posible_primo();
-        let (mut g,mut d,_) = RSA::euclides_extendido(e.clone().to_bigint().unwrap(),phi.clone().to_bigint().unwrap());
-        while g.clone() != big(1) || e.clone() >= phi.clone() {
+        let (mut g,mut d,_) = RSA::euclides_extendido(e.to_bigint().unwrap(),phi.to_bigint().unwrap());
+        while g.clone() != big(1) || e.clone() > phi.clone() {
             let e = RSA::generar_posible_primo();
-            let (gp,dp,_) = RSA::euclides_extendido(e.clone().to_bigint().unwrap(),phi.clone().to_bigint().unwrap());
+            let (gp,dp,_) = RSA::euclides_extendido(e.to_bigint().unwrap(),phi.to_bigint().unwrap());
             // rust no permite desempacar tuplas usando variables existentes
             g = gp;
             d = dp;
         }
-        return (e,d.to_biguint().unwrap()%phi);
+        let u_d: BigUint;
+        println!("original d:{}", d);
+        if d < big(0) {
+            u_d = (d % phi.to_bigint().unwrap() + phi.to_bigint().unwrap()).to_biguint().unwrap();
+        }
+        else {
+            u_d = d.to_biguint().unwrap() % phi.clone();
+        }
+        println!("g: {} e:{} d:{}", g, e, u_d);
+        return (e,u_d);
     }
 
     pub fn desencriptar_con_clave(_mensaje:&str, _e:u64, _n:u64) -> &str{
@@ -225,8 +234,8 @@ mod tests {
         let phi = "77514839631394632856157018692053563208632353428439537437820".parse::<BigUint>().unwrap();
         let (e,d) = RSA::generar_ed(phi.clone());
         println!("este es phi: {}",phi.to_bigint().unwrap());
-        println!("este es e: {}",phi.to_bigint().unwrap());
-        println!("este es d: {}",phi.to_bigint().unwrap());
+        println!("este es e: {}",e.to_bigint().unwrap());
+        println!("este es d: {}",d);
         let (g, _, _) = RSA::euclides_extendido(e.to_bigint().unwrap(), phi.to_bigint().unwrap());
         println!("este es g: {}", g);
         assert!(e.clone()<phi.clone());
