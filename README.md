@@ -21,7 +21,9 @@ cargo run
 
 ### Pre-requisitos 📋
 
-* Rust (versión 1.38.0)
+* [Rust](https://www.rust-lang.org/) - versión 1.38.0
+
+* [GTK](https://www.gtk.org/download/index.php)
 
 ## Ejecutando las pruebas ⚙️
 
