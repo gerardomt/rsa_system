@@ -2,6 +2,8 @@ use std::fs;
 use std::str;
 use std::io::{self, BufRead};
 
+use num::bigint::{BigUint};
+
 use crate::rsa;
 
 const MESSAGE_MAX_LENGTH: usize = 257;
@@ -27,14 +29,18 @@ pub fn encrypt_message(message:&str, destination:&str){
     let my_rsa = rsa::RSA::new();
 
     let mut message = String::from(message);
+    
     if message.len() > MESSAGE_MAX_LENGTH {
         message.split_off(MESSAGE_MAX_LENGTH);
     }
 
     let encrypted_content = my_rsa.encriptar(&message);
+    
     let encrypted_content = str::from_utf8(&encrypted_content)
         .expect("Invalid UTF-8 sequence");
+    
     let mut key = my_rsa.get_e().to_string();
+    
     key.push_str("\n");
     key.push_str(&my_rsa.get_n().to_string());
 
@@ -46,6 +52,7 @@ pub fn encrypt_message(message:&str, destination:&str){
 
     fs::write(path, encrypted_content)
         .expect("Something went wrong writing the file");
+
     fs::write(keypath, key)
         .expect("Something went wrong writing the key");
 }
@@ -60,15 +67,22 @@ pub fn decrypt_file(filename:&str, keyfile:&str, destination:&str){
 
     let keyf = fs::File::open(keyfile)
         .expect("Something went wrong reading the keyfile");
+    
     let buffer = io::BufReader::new(keyf);
-    let mut e:u64 = 0;
-    let mut n:u64 = 0;
+    
+    //let mut e:u64 = 0;
+    //let mut n:u64 = 0;
+
+    let mut e: BigUint = rsa::ubig(0);
+    let mut n: BigUint = rsa::ubig(0);
 
     for (i, line) in buffer.lines().enumerate(){
         if i==0 {
-            e = line.unwrap().parse::<u64>().unwrap();
+            //e = line.unwrap().parse::<u64>().unwrap();
+            e = rsa::ubig(line.unwrap().parse::<u64>().unwrap());
         } else {
-            n = line.unwrap().parse::<u64>().unwrap();
+            //n = line.unwrap().parse::<u64>().unwrap();
+            n = rsa::ubig(line.unwrap().parse::<u64>().unwrap());
         }
     }
 
@@ -78,5 +92,5 @@ pub fn decrypt_file(filename:&str, keyfile:&str, destination:&str){
     path.push_str("/plain_text.txt");
 
     fs::write(path, message)
-        .expect("Something went wrong writing the fileoe");
+        .expect("Something went wrong writing the file");
 }
