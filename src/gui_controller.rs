@@ -42,6 +42,7 @@ pub fn build_gui() {
         } else {
             use_rsa::encrypt_message(&message, &destination);
         }
+        println!("done");
     });
 
     let decrypted_file_button: gtk::FileChooserButton = builder
@@ -70,6 +71,7 @@ pub fn build_gui() {
         let filename = filename.1;
 
         use_rsa::decrypt_file(&filename, &keyfile, &destination);
+        println!("done");
     });
 
     window.show_all();

@@ -1,6 +1,8 @@
 # Proyecto 3 - Criptosistema RSA :lock:
 
-Implementacióń del criptosistema RSA en Rust. Cuenta con una interfaz gráfica que permite al usuario indicar los archivos que quiere cifrar o descifar, así como el lugar donde desea que estos archivos se almacenen.
+Implementacióń del criptosistema RSA en Rust. Cuenta con una interfaz gráfica que permite al usuario indicar los archivos que quiere cifrar o descifrar, así como el lugar donde desea que estos archivos se almacenen.
+
+NOTA: El programa compila y se ejecuta como se espera pero no cifra y descifra los mensajes de manera correcta. Parece que tiene que ver con la forma tan estricta como rust maneja las conversiones entre bytes y caracteres válidos utf-8. Hasta no hemos encontrado una solución.
 
 ## Comenzando 🚀
 

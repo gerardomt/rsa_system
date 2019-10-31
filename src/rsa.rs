@@ -1,16 +1,10 @@
-// RECORDATORIO: quitar el guión bajo antes de los parámetros después
-// de implementar la función y quitar #[allow(dead_code)] cuando de que
-// la función sea usada en otro lado.
-
 extern crate num;
 extern crate num_bigint;
 extern crate rand;
 
 use num::bigint::{ToBigUint, ToBigInt, BigUint,BigInt};
 use num_bigint:: RandBigInt;
-
-#[allow(dead_code)]
-const MESSAGE_MAX_LENGTH: usize = 257;
+use std::str::FromStr;
 
 const NUM_BITS: usize = 100;
 const N_PRUEBAS : u64 =  300;
@@ -33,21 +27,20 @@ pub fn ubig(n: u64) -> BigUint {
 
 impl RSA {
 
-    #[allow(dead_code)]
     pub fn new() -> RSA{
         let p = RSA::generar_primo();
         let q = RSA::generar_primo();
         let n1 = p.clone()*q.clone();
         let phi = (p.clone()-ubig(1))*(q.clone()-ubig(1));
         let (e1, d1) = RSA::generar_ed(phi.clone());
-            
+
         RSA {
             n: n1,
             e: e1,
             _d: d1
         }
-    }   
-        
+    }
+
     // recibe dos enteros a y b
     // devuelve d,x,y donde:
     // d = mcd(a,b)
@@ -74,7 +67,7 @@ impl RSA {
         if (n == ubig(2)) || (n == ubig(3)) {
             return true;
         }
-        // si es par, no es primo 
+        // si es par, no es primo
         if n.clone() & ubig(1) == ubig(0){
             return false;
         }
@@ -89,7 +82,7 @@ impl RSA {
         // hace la prueba k veces
         let mut rng = rand::thread_rng();
 
-    
+
         fn probar_compuesto(a: BigUint, d:BigUint, n: BigUint, r: u32) -> bool {
             if a.modpow(&d, &n) == ubig(1) {
                 return false;
@@ -153,8 +146,6 @@ impl RSA {
         return (e,u_d);
     }
 
-    // ------------------------ IMPLEMENTACIONES NUEVAS ----------------------------
-    
     /// Genera los bigUInts básicos: 0, 1 y 2.
     pub fn gen_biguints_basicos() -> (BigUint, BigUint, BigUint) {
         (ubig(0), ubig(1), ubig(2))
@@ -177,74 +168,38 @@ impl RSA {
             base = (base.clone() * base.clone()) % md;
         }
 
-        res 
+        res
     }
 
     /// Función para encriptar un mensaje dado.
     /// Devuelve un vector de bytes.
-    #[allow(dead_code)]
-    pub fn encriptar(&self,_mensaje:&str) -> Vec<u8> {
-        /*
-        if !_mensaje.is_ascii() {
-            return Err("Error. Por favor elimine los carácteres que no estén en ASCII.")
-        } else {
-            let m = BigUint::from_bytes_be(_mensaje.as_bytes());
-            let c = RSA::exp_mod(&m, &self.e, &self.n);
-
-            let res = BigUint::to_bytes_be(&c); // Orden de bytes: Big Endian.
-            
-            res
-        }
-        */
-        let m = BigUint::from_bytes_be(_mensaje.as_bytes());
+    pub fn encriptar(&self,mensaje:&str) -> BigUint {
+        let m = BigUint::from_bytes_be(mensaje.as_bytes());
         let c = RSA::exp_mod(&m, &self.e, &self.n);
 
-        let res = BigUint::to_bytes_be(&c); // Orden de bytes: Big Endian.
-            
-        res
+        c
     }
 
     /// Función para desencriptar un mensaje
     /// previamente encriptado por el algoritmo.
     /// Devuelve una cadena con el mensaje original.
     #[allow(dead_code)]
-    //pub fn desencriptar(&self, _byte_array: &[u8]) -> &str {
-    pub fn desencriptar(&self, _byte_array: &[u8]) -> String {
-        let c = BigUint::from_bytes_be(_byte_array);
-
+    pub fn desencriptar(&self, mensaje: &str) -> String {
+        let c = BigUint::from_str(mensaje).unwrap();
         let m = RSA::exp_mod(&c, &self.e, &self.n).to_bytes_be();
-
         let res = std::str::from_utf8(&m).unwrap().to_string();
-        
+
         res
     }
 
     /// Función para desencriptar dadas las claves.
-    #[allow(dead_code)]
-    //pub fn desencriptar_con_clave(_mensaje:&str, _e:BigUint, _n:BigUint) -> &str {
-    pub fn desencriptar_con_clave(_mensaje:&str, _e:BigUint, _n:BigUint) -> String {
-        let c = BigUint::from_bytes_be(_mensaje.as_bytes());
+    pub fn desencriptar_con_clave(mensaje:&str, e:BigUint, n:BigUint) -> String {
+        let c = BigUint::from_str(mensaje).unwrap();
+        let m = RSA::exp_mod(&c, &e, &n).to_bytes_be();
+        let result = String::from_utf8_lossy(&m).into_owned();
 
-        let m = RSA::exp_mod(&c, &_e, &_n).to_bytes_be();
-
-        let res = std::str::from_utf8(&m).unwrap().to_string();
-        
-        res
+        result
     }
-    /*
-    /// Setter para la clave pública.
-    #[allow(dead_code)]
-    pub fn set_e(&self, _e:BigUint) -> ! {
-        self.e = _e;
-    }
-
-    /// Setter para la clave privada.
-    #[allow(dead_code)]
-    pub fn set_n(&self, _n:BigUint) -> ! {
-        self.n = _n;
-    }
-    */
-    // ----------------------- FIN IMPLEMENTACIONES NUEVAS --------------------------
 
     pub fn get_e(&self) -> BigUint {
         self.e.clone()
@@ -254,7 +209,7 @@ impl RSA {
         self.n.clone()
     }
 }
- 
+
 
 #[cfg(test)]
 mod tests {

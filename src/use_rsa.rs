@@ -3,6 +3,7 @@ use std::str;
 use std::io::{self, BufRead};
 
 use num::bigint::{BigUint};
+use std::str::FromStr;
 
 use crate::rsa;
 
@@ -29,18 +30,17 @@ pub fn encrypt_message(message:&str, destination:&str){
     let my_rsa = rsa::RSA::new();
 
     let mut message = String::from(message);
-    
+
     if message.len() > MESSAGE_MAX_LENGTH {
         message.split_off(MESSAGE_MAX_LENGTH);
     }
+    println!("{}",message);
 
     let encrypted_content = my_rsa.encriptar(&message);
-    
-    let encrypted_content = str::from_utf8(&encrypted_content)
-        .expect("Invalid UTF-8 sequence");
-    
+    let encrypted_content = encrypted_content.to_string();
+
     let mut key = my_rsa.get_e().to_string();
-    
+
     key.push_str("\n");
     key.push_str(&my_rsa.get_n().to_string());
 
@@ -67,22 +67,19 @@ pub fn decrypt_file(filename:&str, keyfile:&str, destination:&str){
 
     let keyf = fs::File::open(keyfile)
         .expect("Something went wrong reading the keyfile");
-    
+
     let buffer = io::BufReader::new(keyf);
-    
-    //let mut e:u64 = 0;
-    //let mut n:u64 = 0;
 
     let mut e: BigUint = rsa::ubig(0);
     let mut n: BigUint = rsa::ubig(0);
 
     for (i, line) in buffer.lines().enumerate(){
         if i==0 {
-            //e = line.unwrap().parse::<u64>().unwrap();
-            e = rsa::ubig(line.unwrap().parse::<u64>().unwrap());
+            let l = line.unwrap();
+            e = BigUint::from_str(&l).unwrap();
         } else {
-            //n = line.unwrap().parse::<u64>().unwrap();
-            n = rsa::ubig(line.unwrap().parse::<u64>().unwrap());
+            let l = line.unwrap();
+            n = BigUint::from_str(&l).unwrap();
         }
     }
 
